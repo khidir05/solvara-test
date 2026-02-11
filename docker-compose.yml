@@ -1,0 +1,70 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: triage-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: triage_db
+      POSTGRES_USER: triage_user
+      POSTGRES_PASSWORD: triage_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - triage-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: triage-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - triage-net
+
+  backend-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: triage-backend-api
+    command: ["npm", "run", "start:api"]
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      DATABASE_URL: postgres://triage_user:triage_password@postgres:5432/triage_db
+      REDIS_URL: redis://redis:6379
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - triage-net
+
+  backend-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: triage-backend-worker
+    command: ["npm", "run", "start:worker"]
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgres://triage_user:triage_password@postgres:5432/triage_db
+      REDIS_URL: redis://redis:6379
+      GEMINI_API_KEY: YOUR_GEMINI_API_KEY_HERE
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - triage-net
+
+volumes:
+  postgres_data:
+
+networks:
+  triage-net:
+    driver: bridge

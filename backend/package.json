@@ -1,0 +1,31 @@
+{
+    "name": "triage-recovery-backend",
+    "version": "1.0.0",
+    "description": "Backend API and worker for the Triage & Recovery Hub",
+    "main": "src/index.js",
+    "scripts": {
+        "dev": "nodemon src/index.js",
+        "migrate": "prisma migrate deploy",
+        "start:api": "npx prisma generate && npx prisma migrate deploy && node src/index.js",
+        "start:worker": "npx prisma generate && node src/workers/index.js"
+    },
+    "dependencies": {
+        "@google/generative-ai": "^0.24.1",
+        "@prisma/client": "^5.10.0",
+        "bullmq": "^5.0.0",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.0",
+        "express": "^4.19.0",
+        "ioredis": "^5.4.0",
+        "openai": "^4.0.0",
+        "pg": "^8.11.0",
+        "prisma": "^5.10.0",
+        "zod": "^3.23.0"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.0"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    }
+}

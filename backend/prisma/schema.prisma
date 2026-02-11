@@ -1,0 +1,21 @@
+generator client {
+  provider      = "prisma-client-js"
+  // "native" untuk laptop Anda, "linux-musl-openssl-3.0.x" untuk Docker Alpine
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Ticket {
+  id         Int      @id @default(autoincrement())
+  content    String
+  status     String   @default("PENDING")
+  category   String?
+  sentiment  Int?
+  urgency    String?
+  replyDraft String?  @db.Text
+  createdAt  DateTime @default(now())
+}
