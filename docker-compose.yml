@@ -55,7 +55,11 @@ services:
       NODE_ENV: development
       DATABASE_URL: postgres://triage_user:triage_password@postgres:5432/triage_db
       REDIS_URL: redis://redis:6379
+
+      // change with your gemini api key
       GEMINI_API_KEY: YOUR_GEMINI_API_KEY_HERE
+
+
     depends_on:
       - postgres
       - redis
